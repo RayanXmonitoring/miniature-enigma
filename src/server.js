@@ -20,8 +20,8 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
 // Rate limiting
 const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // limit each IP to 100 requests per windowMs
+  windowMs: 15 * 60 * 1000,
+  max: 100,
   message: {
     success: false,
     message: 'Too many requests, please try again later.',
@@ -36,16 +36,32 @@ app.use('/api', apiRoutes);
 app.get('/', (req, res) => {
   res.json({
     name: 'Telegram Member Mover API',
-    version: '1.0.0',
+    version: '2.0.0',
     status: 'online',
+    description: 'Pindahkan member grup Telegram menggunakan username',
     endpoints: {
       health: '/api/health',
       me: '/api/me',
-      groupInfo: '/api/group/:groupId',
-      members: '/api/members/:groupId',
-      move: '/api/move (POST)',
-      leave: '/api/leave/:groupId (POST)',
+      groupInfo: '/api/group/:username',
+      members: '/api/members/:username',
+      preview: '/api/preview (POST) - Dry run',
+      move: '/api/move (POST) - Move members',
+      leave: '/api/leave/:username (POST)',
     },
+    example: {
+      move: {
+        method: 'POST',
+        url: '/api/move',
+        headers: { 'x-api-key': 'your_api_key' },
+        body: {
+          sourceUsername: 'namagroupsumber',
+          destUsername: 'namagrupptujuan',
+          batchSize: 50,
+          delay: 1000,
+          limit: 100
+        }
+      }
+    }
   });
 });
 
@@ -70,16 +86,17 @@ app.use((req, res) => {
 // Initialize Telegram client and start server
 async function startServer() {
   try {
-    // Initialize Telegram client
     await initializeClient();
     logger.info('Telegram client initialized');
 
-    // Start Express server
     app.listen(PORT, () => {
       logger.info(`🚀 Server running on port ${PORT}`);
       console.log(`✅ Server is running at http://localhost:${PORT}`);
       console.log(`📱 Telegram client is ready`);
       console.log(`🔑 Use API key: ${process.env.ADMIN_API_KEY}`);
+      console.log(`\n📝 Contoh penggunaan:`);
+      console.log(`POST /api/move`);
+      console.log(`Body: { "sourceUsername": "namagroup", "destUsername": "namatujuan" }`);
     });
   } catch (error) {
     logger.error('Failed to start server:', error);
