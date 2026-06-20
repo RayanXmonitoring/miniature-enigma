@@ -1,12 +1,13 @@
 {
   "name": "telegram-member-mover-api",
-  "version": "1.0.0",
-  "description": "Server API untuk memindahkan member grup Telegram tanpa bot",
+  "version": "2.0.0",
+  "description": "Server API untuk memindahkan member grup Telegram menggunakan username",
   "main": "src/server.js",
   "scripts": {
     "start": "node src/server.js",
     "dev": "nodemon src/server.js",
-    "setup": "node src/setup.js"
+    "setup": "node src/setup.js",
+    "list-groups": "node scripts/get-group-id.js"
   },
   "dependencies": {
     "express": "^4.18.2",
